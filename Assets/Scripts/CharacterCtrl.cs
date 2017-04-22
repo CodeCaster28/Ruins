@@ -11,11 +11,11 @@ public class CharacterCtrl : MonoBehaviour {
 	public GameObject pairedCamera;
 	public float jumpForce;
 	public GameObject playerModel;
-	public CapsuleCollider collisionBox;
+	public BoxCollider collisionBox;
 	public GameObject feets;
 
 	private float currentVel;
-	private float distanceToGround;
+	//private float distanceToGround;
 	private Quaternion targetRotation;
 	private RaycastHit groundHit;
 	private Rigidbody rBody;
@@ -31,7 +31,7 @@ public class CharacterCtrl : MonoBehaviour {
 		}
 		GetInput();
 		
-		Debug.DrawRay(collisionBox.transform.position, new Vector3 (0,-distanceToGround, 0), Color.green);
+		//Debug.DrawRay(collisionBox.transform.position, new Vector3 (0,-distanceToGround, 0), Color.green);
 	}
 
 	private void FixedUpdate() {
@@ -46,7 +46,7 @@ public class CharacterCtrl : MonoBehaviour {
 	void Start () {
 		currentVel = maxVel;
 		targetRotation = transform.rotation;
-		distanceToGround = (transform.localScale.y * collisionBox.height) / 2;
+		//distanceToGround = (transform.localScale.y * collisionBox.size.y) / 2;
 
 		if (GetComponent<Rigidbody>()) {
 			rBody = GetComponent<Rigidbody>();

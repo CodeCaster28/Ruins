@@ -21,7 +21,6 @@ public class CharacterCtrl : MonoBehaviour {
 	private Rigidbody rBody;
 	private Vector3 direction;
 	private float forwardInput, sideInput;
-	//private bool isGrounded;
 
 	//== Mono ===========================
 
@@ -37,10 +36,6 @@ public class CharacterCtrl : MonoBehaviour {
 	private void FixedUpdate() {
 		Run();
 		Turn();
-		/*if (!IsGrounded()) {
-			currentVel -= 0.1f;
-		}
-		else currentVel = maxVel;*/
 	}
 
 	void Start () {
@@ -53,7 +48,6 @@ public class CharacterCtrl : MonoBehaviour {
 		}
 		else Debug.LogError("Player has no rigidbody");
 		forwardInput = sideInput = 0;
-
 	}
 
 	//== Publics ========================
@@ -62,23 +56,14 @@ public class CharacterCtrl : MonoBehaviour {
 		get { return targetRotation; }
 	}
 
-
-
 	//== Methods ========================
 
 	private void GetInput() {
 		forwardInput = Input.GetAxis("Vertical");
 		sideInput = Input.GetAxis("Horizontal");
-
 	}
 
 	private bool IsGrounded() {
-		/*if (Physics.Raycast(collisionBox.transform.position, Vector3.down, distanceToGround)) {
-			return true;
-		}
-		else {
-			return false;
-		}*/
 
 		if (feets.GetComponent<Feets>().OnGround())
 			return true;
@@ -98,34 +83,48 @@ public class CharacterCtrl : MonoBehaviour {
 			if (direction.magnitude > 1)
 				direction = direction / direction.magnitude;
 
-			// * (IsGrounded() == true ? moveVel : moveVel/3)
 			var vel = direction * (IsGrounded() == true ? currentVel : currentVel * 0.93f);
+			rBody.drag = 0;
 			vel.y = rBody.velocity.y;
 			rBody.velocity = vel;
 
-			//rBody.AddForce((direction * currentVel), ForceMode.VelocityChange);
-
 			targetRotation = Quaternion.LookRotation(direction, Vector3.up);
 		}
-		else {
-			if (IsGrounded()) { 
+		else if (IsGrounded()) {
 				var vel = Vector3.zero;
 				vel.y = rBody.velocity.y;
 				rBody.velocity = vel;
-			}
-			//else currentVel -= 0.1f;
+				rBody.drag = 60;
 		}
+		else
+			rBody.drag = 0;
 	}
 
 	private void Jump() {
 		if (IsGrounded() == true) {
+			StartCoroutine(Jumping());
 			rBody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
 			Debug.Log("Jump");
 		}
+		else StartCoroutine(DelayJump());
 	}
-
+	
 	private void Turn() { 
 		targetRotation = Quaternion.Slerp(playerModel.transform.rotation, targetRotation, Time.deltaTime * 12f);
 		playerModel.transform.rotation = targetRotation;
+	}
+
+	IEnumerator DelayJump() {
+		yield return new WaitForSeconds(0.1f);
+		if (IsGrounded() == true)
+			Jump();
+		yield return null;
+	}
+
+	IEnumerator Jumping() {
+		feets.GetComponent<Feets>().ForceFlight = true;
+		yield return new WaitForSeconds(0.1f);
+		feets.GetComponent<Feets>().ForceFlight = false;
+		yield return null;
 	}
 }

@@ -25,9 +25,7 @@ public class CharacterCtrl : MonoBehaviour {
 	//== Mono ===========================
 
 	void Update() {
-		if (Input.GetKeyDown(KeyCode.Space)) {
-			Jump();
-		}
+
 		GetInput();
 		
 		//Debug.DrawRay(collisionBox.transform.position, new Vector3 (0,-distanceToGround, 0), Color.green);
@@ -61,6 +59,9 @@ public class CharacterCtrl : MonoBehaviour {
 	private void GetInput() {
 		forwardInput = Input.GetAxis("Vertical");
 		sideInput = Input.GetAxis("Horizontal");
+		if (Input.GetButtonDown("Jump")) {
+			Jump();
+		}
 	}
 
 	private bool IsGrounded() {
@@ -115,7 +116,7 @@ public class CharacterCtrl : MonoBehaviour {
 	}
 
 	IEnumerator DelayJump() {
-		yield return new WaitForSeconds(0.1f);
+		yield return new WaitForSeconds(0.6f);
 		if (IsGrounded() == true)
 			Jump();
 		yield return null;

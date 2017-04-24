@@ -7,12 +7,24 @@ ModelImporter:
   fileIDToRecycleName:
     100000: //RootNode
     100002: Wall (1)
+    100004: ruinFloor1 (1)
+    100006: ruinWall1 (1)
     400000: //RootNode
     400002: Wall (1)
+    400004: ruinFloor1 (1)
+    400006: ruinWall1 (1)
     2300000: Wall (1)
+    2300002: ruinFloor1 (1)
+    2300004: ruinWall1 (1)
     3300000: Wall (1)
+    3300002: ruinFloor1 (1)
+    3300004: ruinWall1 (1)
     4300000: Wall (1)
+    4300002: ruinWall1 (1)
+    4300004: ruinFloor1 (1)
     6400000: Wall (1)
+    6400002: ruinFloor1 (1)
+    6400004: ruinWall1 (1)
   materials:
     importMaterials: 1
     materialName: 1

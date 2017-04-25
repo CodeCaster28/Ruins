@@ -13,12 +13,12 @@ public class CharacterCtrl : MonoBehaviour {
 	public GameObject playerModel;
 	public BoxCollider collisionBox;
 	public GameObject feets;
+	public Rigidbody rBody;
 
 	private float currentVel;
 	//private float distanceToGround;
 	private Quaternion targetRotation;
 	private RaycastHit groundHit;
-	private Rigidbody rBody;
 	private Vector3 direction;
 	private float forwardInput, sideInput;
 
@@ -41,10 +41,10 @@ public class CharacterCtrl : MonoBehaviour {
 		targetRotation = transform.rotation;
 		//distanceToGround = (transform.localScale.y * collisionBox.size.y) / 2;
 
-		if (GetComponent<Rigidbody>()) {
+		/*if (GetComponent<Rigidbody>()) {
 			rBody = GetComponent<Rigidbody>();
 		}
-		else Debug.LogError("Player has no rigidbody");
+		else Debug.LogError("Player has no rigidbody");*/
 		forwardInput = sideInput = 0;
 	}
 
@@ -73,6 +73,18 @@ public class CharacterCtrl : MonoBehaviour {
 
 	private void Run() {
 
+		var momentum = Vector3.zero;
+		RaycastHit hit;
+		Debug.DrawRay(rBody.transform.position, Vector3.down * 1, Color.green);
+		if (Physics.Raycast(rBody.transform.position, Vector3.down, out hit, 1)) {
+			if (hit.collider.GetComponent<Rigidbody>()) {
+				momentum = hit.collider.GetComponent<Rigidbody>().velocity;
+				if (momentum.y > 0) momentum.y = 0;
+			}
+			else
+				momentum = Vector3.zero;
+		}
+
 		if (Mathf.Abs(forwardInput) > inputDelay || Mathf.Abs(sideInput) > inputDelay) {
 			currentVel = maxVel;
 			direction = new Vector3(sideInput, 0f, forwardInput);
@@ -87,15 +99,15 @@ public class CharacterCtrl : MonoBehaviour {
 			var vel = direction * (IsGrounded() == true ? currentVel : currentVel * 0.93f);
 			rBody.drag = 0;
 			vel.y = rBody.velocity.y;
-			rBody.velocity = vel;
+			rBody.velocity = vel + momentum;
 
 			targetRotation = Quaternion.LookRotation(direction, Vector3.up);
 		}
 		else if (IsGrounded()) {
 				var vel = Vector3.zero;
-				vel.y = rBody.velocity.y;
-				rBody.velocity = vel;
-				rBody.drag = 60;
+			//vel.y = rBody.velocity.y;
+				rBody.velocity = momentum;
+				rBody.drag = (momentum == Vector3.zero ? 60 : 0);
 		}
 		else
 			rBody.drag = 0;

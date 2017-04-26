@@ -78,11 +78,10 @@ public class CharacterCtrl : MonoBehaviour {
 		Debug.Log("Last collider picked: " + feets.GetComponent<Feets>().GetLastCollider());
 		if (feets.GetComponent<Feets>().GetLastCollider() != null) {
 			momentum = feets.GetComponent<Feets>().GetLastCollider().GetComponent<Rigidbody>().velocity;
+			if (momentum.y > 0) momentum.y = 0;
 		}
 		else
 			momentum = Vector3.zero;
-
-
 
 		// Move the player basing on pressed keys, add momentum to velocity
 		if (Mathf.Abs(forwardInput) > inputDelay || Mathf.Abs(sideInput) > inputDelay) {

@@ -5,8 +5,9 @@ using UnityEngine;
 
 public class PlatformSimple : MonoBehaviour {
 
-	public enum Direction { Up, Down, Left }
+	public enum Direction { Up, Down, Left, Right, Forward, Back }
 
+	[SerializeField]
 	public Direction dir;
 	public float distance;
 	public bool pingPong;
@@ -16,7 +17,6 @@ public class PlatformSimple : MonoBehaviour {
 	private Rigidbody rBody;
 	private Vector3 startPos;
 	private bool stop;
-
 
 	void Start() {
 		rBody = GetComponent<Rigidbody>();
@@ -32,20 +32,71 @@ public class PlatformSimple : MonoBehaviour {
 			case Direction.Left:
 				direction = Vector3.left;
 				break;
+			case Direction.Right:
+				direction = Vector3.right;
+				break;
+			case Direction.Forward:
+				direction = Vector3.forward;
+				break;
+			case Direction.Back:
+				direction = Vector3.back;
+				break;
 		}
 	}
 
-	private void Update() {
-
-	}
-
 	void FixedUpdate() {
-
 		MoveToPosition();
 	}
 
 	public Vector3 GetDirection {
 		get { return direction; }
+	}
+
+	void OnDrawGizmos() {
+		Gizmos.color = new Color(0.15f, 0.85f, 1, 1);
+		Gizmos.DrawSphere(transform.position, 0.3f);
+		Gizmos.DrawRay(transform.position, GetDirEditor() * distance);
+		Vector3 right = Quaternion.LookRotation(GetDirEditor() * distance) * Quaternion.Euler(0, 180 + 20.0f, 0) * new Vector3(0, 0, 1);
+		Vector3 left = Quaternion.LookRotation(GetDirEditor() * distance) * Quaternion.Euler(0, 180 - 20.0f, 0) * new Vector3(0, 0, 1);
+		Vector3 front = Quaternion.LookRotation(GetDirEditor() * distance) * Quaternion.Euler(-90 + 20.0f, 0, 0) * new Vector3(0, 1, 0);
+		Vector3 back = Quaternion.LookRotation(GetDirEditor() * distance) * Quaternion.Euler(-90 - 20.0f, 0, 0) * new Vector3(0, 1, 0);
+		Gizmos.DrawRay(transform.position + GetDirEditor() * distance, right * 0.5f);
+		Gizmos.DrawRay(transform.position + GetDirEditor() * distance, left * 0.5f);
+		Gizmos.DrawRay(transform.position + GetDirEditor() * distance, front * 0.5f);
+		Gizmos.DrawRay(transform.position + GetDirEditor() * distance, back * 0.5f);
+		if(pingPong == true) {
+			Vector3 rightp = Quaternion.LookRotation(GetDirEditor() * distance) * Quaternion.Euler(0, 0 + 20.0f, 0) * new Vector3(0, 0, 1);
+			Vector3 leftp = Quaternion.LookRotation(GetDirEditor() * distance) * Quaternion.Euler(0, 0 - 20.0f, 0) * new Vector3(0, 0, 1);
+			Vector3 frontp = Quaternion.LookRotation(GetDirEditor() * distance) * Quaternion.Euler(-270 + 20.0f, 0, 0) * new Vector3(0, 1, 0);
+			Vector3 backp = Quaternion.LookRotation(GetDirEditor() * distance) * Quaternion.Euler(-270 - 20.0f, 0, 0) * new Vector3(0, 1, 0);
+			Gizmos.DrawRay(transform.position + GetDirEditor() * distance / 3, rightp * 0.4f);
+			Gizmos.DrawRay(transform.position + GetDirEditor() * distance / 3, leftp * 0.4f);
+			Gizmos.DrawRay(transform.position + GetDirEditor() * distance / 3 , frontp * 0.4f);
+			Gizmos.DrawRay(transform.position + GetDirEditor() * distance / 3, backp * 0.4f);
+		}
+	}
+
+	private void DrawArrow() {
+
+	}
+
+	public Vector3 GetDirEditor(){
+		switch (dir) {
+			case Direction.Up:
+				return Vector3.up;
+			case Direction.Down:
+				return Vector3.down;
+			case Direction.Left:
+				return Vector3.left;
+			case Direction.Right:
+				return Vector3.right;
+			case Direction.Forward:
+				return Vector3.forward;
+			case Direction.Back:
+				return Vector3.back;
+			default:
+				return Vector3.zero;
+		}
 	}
 
 	private void MoveToPosition() {
@@ -62,5 +113,4 @@ public class PlatformSimple : MonoBehaviour {
 			}
 		}
 	}
-
 }

@@ -8,22 +8,27 @@ public class Feets : MonoBehaviour {
 
 	private int numColliders = 0;
 	private bool forceFlight;
+	private List<Collider> colliders;
 
 	//== Mono ===========================
 
 	private void Start() {
 		forceFlight = false;
+		colliders = new List<Collider>();
 	}
 
 	private void OnTriggerEnter(Collider other) {
 		if (other.tag == "Untagged") {
 			numColliders++;
+			if (other.GetComponent<Rigidbody>())
+				colliders.Add(other);
 		}
 	}
 
 	private void OnTriggerExit(Collider other) {
 		if (other.tag == "Untagged") {
 			numColliders--;
+			colliders.Remove(other);
 		}
 	}
 
@@ -38,5 +43,13 @@ public class Feets : MonoBehaviour {
 		if (numColliders == 0 || forceFlight == true)
 			return false;
 		else return true;
+	}
+
+	public Collider GetLastCollider() {
+
+		if (colliders.Count > 0) {
+			return colliders[colliders.Count - 1];
+		}
+		else return null;
 	}
 }

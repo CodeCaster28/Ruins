@@ -16,19 +16,16 @@ public class CharacterCtrl : MonoBehaviour {
 	public Rigidbody rBody;
 
 	private float currentVel;
-	//private float distanceToGround;
 	private Quaternion targetRotation;
 	private RaycastHit groundHit;
 	private Vector3 direction;
 	private float forwardInput, sideInput;
+	private Coroutine jumpCoroutine = null;
 
 	//== Mono ===========================
 
 	void Update() {
-
 		GetInput();
-		
-		//Debug.DrawRay(collisionBox.transform.position, new Vector3 (0,-distanceToGround, 0), Color.green);
 	}
 
 	private void FixedUpdate() {
@@ -39,12 +36,6 @@ public class CharacterCtrl : MonoBehaviour {
 	void Start () {
 		currentVel = maxVel;
 		targetRotation = transform.rotation;
-		//distanceToGround = (transform.localScale.y * collisionBox.size.y) / 2;
-
-		/*if (GetComponent<Rigidbody>()) {
-			rBody = GetComponent<Rigidbody>();
-		}
-		else Debug.LogError("Player has no rigidbody");*/
 		forwardInput = sideInput = 0;
 	}
 
@@ -65,16 +56,14 @@ public class CharacterCtrl : MonoBehaviour {
 	}
 
 	private bool IsGrounded() {
-
 		if (feets.GetComponent<Feets>().OnGround())
 			return true;
 		else return false;
 	}
 
 	private void Run() {
-
 		var momentum = Vector3.zero;
-		RaycastHit hit;
+		/*RaycastHit hit;
 		Debug.DrawRay(rBody.transform.position, Vector3.down * 1, Color.green);
 		if (Physics.Raycast(rBody.transform.position, Vector3.down, out hit, 1)) {
 			if (hit.collider.GetComponent<Rigidbody>()) {
@@ -83,8 +72,19 @@ public class CharacterCtrl : MonoBehaviour {
 			}
 			else
 				momentum = Vector3.zero;
-		}
+		}*/
 
+		// Generate momentum from rigidbody player standing on
+		Debug.Log("Last collider picked: " + feets.GetComponent<Feets>().GetLastCollider());
+		if (feets.GetComponent<Feets>().GetLastCollider() != null) {
+			momentum = feets.GetComponent<Feets>().GetLastCollider().GetComponent<Rigidbody>().velocity;
+		}
+		else
+			momentum = Vector3.zero;
+
+
+
+		// Move the player basing on pressed keys, add momentum to velocity
 		if (Mathf.Abs(forwardInput) > inputDelay || Mathf.Abs(sideInput) > inputDelay) {
 			currentVel = maxVel;
 			direction = new Vector3(sideInput, 0f, forwardInput);
@@ -96,6 +96,7 @@ public class CharacterCtrl : MonoBehaviour {
 			if (direction.magnitude > 1)
 				direction = direction / direction.magnitude;
 
+			// Air control velocity is smaller
 			var vel = direction * (IsGrounded() == true ? currentVel : currentVel * 0.93f);
 			rBody.drag = 0;
 			vel.y = rBody.velocity.y;
@@ -105,7 +106,6 @@ public class CharacterCtrl : MonoBehaviour {
 		}
 		else if (IsGrounded()) {
 				var vel = Vector3.zero;
-			//vel.y = rBody.velocity.y;
 				rBody.velocity = momentum;
 				rBody.drag = (momentum == Vector3.zero ? 60 : 0);
 		}
@@ -117,9 +117,13 @@ public class CharacterCtrl : MonoBehaviour {
 		if (IsGrounded() == true) {
 			StartCoroutine(Jumping());
 			rBody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-			Debug.Log("Jump");
+			//Debug.Log("Jump");
 		}
-		else StartCoroutine(DelayJump());
+		else {
+			if (jumpCoroutine != null)
+				StopCoroutine(jumpCoroutine);
+			jumpCoroutine = StartCoroutine(DelayJump());
+		}
 	}
 	
 	private void Turn() { 
@@ -128,9 +132,14 @@ public class CharacterCtrl : MonoBehaviour {
 	}
 
 	IEnumerator DelayJump() {
-		yield return new WaitForSeconds(0.6f);
-		if (IsGrounded() == true)
-			Jump();
+
+		for(int i = 0; i < 3; i++) {
+			yield return new WaitForSeconds(0.03f);
+			if (IsGrounded() == true) {
+				Jump();
+				yield return null;
+			}
+		}
 		yield return null;
 	}
 

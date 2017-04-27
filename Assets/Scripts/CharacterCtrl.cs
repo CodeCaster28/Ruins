@@ -10,10 +10,14 @@ public class CharacterCtrl : MonoBehaviour {
 	public float maxVel = 7;
 	public GameObject pairedCamera;
 	public float jumpForce;
-	public GameObject playerModel;
-	public BoxCollider collisionBox;
-	public GameObject feets;
-	public Rigidbody rBody;
+
+	//public GameObject playerModel;
+	private GameObject playerModel;
+	//private BoxCollider collisionBox;
+	private Rigidbody rBody;
+
+	private Feets feets;
+	
 
 	private float currentVel;
 	private Quaternion targetRotation;
@@ -37,6 +41,17 @@ public class CharacterCtrl : MonoBehaviour {
 		currentVel = maxVel;
 		targetRotation = transform.rotation;
 		forwardInput = sideInput = 0;
+
+		playerModel = transform.Find("Base/Model").gameObject;
+		if (playerModel == null) Debug.Log("No player model 'Player/Base/Model' gameobject found!");
+
+		
+		if (transform.Find("Base").gameObject == null) Debug.Log("No player base 'Player/Base' gameobject found!");
+		//collisionBox = transform.Find("Base").gameObject.GetComponent<BoxCollider>();
+		rBody = transform.Find("Base").gameObject.GetComponent<Rigidbody>();
+
+		if (transform.Find("Base/Feets").gameObject == null) Debug.Log("No player model 'Player/Base/Feets' gameobject found!");
+		feets = transform.Find("Base/Feets").gameObject.GetComponent<Feets>();
 	}
 
 	//== Publics ========================
@@ -56,28 +71,18 @@ public class CharacterCtrl : MonoBehaviour {
 	}
 
 	private bool IsGrounded() {
-		if (feets.GetComponent<Feets>().OnGround())
+		if (feets.OnGround())
 			return true;
 		else return false;
 	}
 
 	private void Run() {
 		var momentum = Vector3.zero;
-		/*RaycastHit hit;
-		Debug.DrawRay(rBody.transform.position, Vector3.down * 1, Color.green);
-		if (Physics.Raycast(rBody.transform.position, Vector3.down, out hit, 1)) {
-			if (hit.collider.GetComponent<Rigidbody>()) {
-				momentum = hit.collider.GetComponent<Rigidbody>().velocity;
-				if (momentum.y > 0) momentum.y = 0;
-			}
-			else
-				momentum = Vector3.zero;
-		}*/
 
 		// Generate momentum from rigidbody player standing on
-		Debug.Log("Last collider picked: " + feets.GetComponent<Feets>().GetLastCollider());
-		if (feets.GetComponent<Feets>().GetLastCollider() != null) {
-			momentum = feets.GetComponent<Feets>().GetLastCollider().GetComponent<Rigidbody>().velocity;
+		// Debug.Log("Last collider picked: " + feets.GetComponent<Feets>().GetLastCollider());
+		if (feets.GetLastCollider() != null) {
+			momentum = feets.GetLastCollider().GetComponent<Rigidbody>().velocity;
 			if (momentum.y > 0) momentum.y = 0;
 		}
 		else
@@ -143,9 +148,9 @@ public class CharacterCtrl : MonoBehaviour {
 	}
 
 	IEnumerator Jumping() {
-		feets.GetComponent<Feets>().ForceFlight = true;
+		feets.ForceFlight = true;
 		yield return new WaitForSeconds(0.1f);
-		feets.GetComponent<Feets>().ForceFlight = false;
+		feets.ForceFlight = false;
 		yield return null;
 	}
 }

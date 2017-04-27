@@ -6,7 +6,6 @@ using UnityEngine;
 public class PlatformSimple : MonoBehaviour {
 
 	public enum Direction { Up, Down, Left, Right, Forward, Back }
-
 	[SerializeField]
 	public Direction dir;
 	public float distance;
@@ -75,10 +74,12 @@ public class PlatformSimple : MonoBehaviour {
 			Gizmos.DrawRay(transform.position + GetDirEditor() * distance / 3, backp * 0.4f);
 		}
 	}
-
-	private void DrawArrow() {
-
-	}
+	/*
+		private void OnCollisionEnter(Collision other) {
+			if (other.gameObject.tag == "Player") {
+				stop = true;
+			}
+		}*/
 
 	public Vector3 GetDirEditor(){
 		switch (dir) {
@@ -100,16 +101,18 @@ public class PlatformSimple : MonoBehaviour {
 	}
 
 	private void MoveToPosition() {
-		if (stop == false && Vector3.Distance(transform.position, startPos) < distance) {
-			rBody.MovePosition(transform.position + direction * Time.deltaTime * speed);
-		}
-		else {
-			rBody.MovePosition(startPos + direction * distance);	// Fix position excess
-			stop = true;
-			if (pingPong) {
-				startPos = transform.position;
-				direction *= -1;
-				stop = false;
+		if (stop == false) {
+			if (Vector3.Distance(transform.position, startPos) < distance) {
+				rBody.MovePosition(transform.position + direction * Time.deltaTime * speed);
+			}
+			else {
+				rBody.MovePosition(startPos + direction * distance);    // Fix position excess
+				stop = true;
+				if (pingPong) {
+					startPos = transform.position;
+					direction *= -1;
+					stop = false;
+				}
 			}
 		}
 	}

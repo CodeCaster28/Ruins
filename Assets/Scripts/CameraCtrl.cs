@@ -50,7 +50,6 @@ public class CameraCtrl : MonoBehaviour {
 			rotateAxisInUse = true;
 			StartCoroutine(ResetButton());
 			iTween.RotateBy(gameObject, new Vector3(0, 0.125f, 0), 0.17f);
-
 		}
 		else if (rotateInput < 0 && rotateAxisInUse == false) {
 			rotOffset -= 45;

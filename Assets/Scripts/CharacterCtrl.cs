@@ -11,14 +11,10 @@ public class CharacterCtrl : MonoBehaviour {
 	public GameObject pairedCamera;
 	public float jumpForce;
 
-	//public GameObject playerModel;
 	private GameObject playerModel;
-	//private BoxCollider collisionBox;
+	//private CollisionCtrl collision;
 	private Rigidbody rBody;
-
 	private Feets feets;
-	
-
 	private float currentVel;
 	private Quaternion targetRotation;
 	private RaycastHit groundHit;
@@ -41,15 +37,17 @@ public class CharacterCtrl : MonoBehaviour {
 		currentVel = maxVel;
 		targetRotation = transform.rotation;
 		forwardInput = sideInput = 0;
-
+		Initialize();
+	}
+	
+	private void Initialize() {
 		playerModel = transform.Find("Base/Model").gameObject;
 		if (playerModel == null) Debug.Log("No player model 'Player/Base/Model' gameobject found!");
-
-		
 		if (transform.Find("Base").gameObject == null) Debug.Log("No player base 'Player/Base' gameobject found!");
-		//collisionBox = transform.Find("Base").gameObject.GetComponent<BoxCollider>();
 		rBody = transform.Find("Base").gameObject.GetComponent<Rigidbody>();
-
+		if (rBody == null) Debug.Log("No rigidbody assigned to 'Player/Base'!");
+		// collision = transform.Find("Base").gameObject.GetComponent<CollisionCtrl>();
+		// if (collision == null) Debug.Log("No collisionctrl script assigned to 'Player/Base'!");
 		if (transform.Find("Base/Feets").gameObject == null) Debug.Log("No player model 'Player/Base/Feets' gameobject found!");
 		feets = transform.Find("Base/Feets").gameObject.GetComponent<Feets>();
 	}
@@ -134,6 +132,8 @@ public class CharacterCtrl : MonoBehaviour {
 		targetRotation = Quaternion.Slerp(playerModel.transform.rotation, targetRotation, Time.deltaTime * 12f);
 		playerModel.transform.rotation = targetRotation;
 	}
+
+	//== Coroutines =====================
 
 	IEnumerator DelayJump() {
 

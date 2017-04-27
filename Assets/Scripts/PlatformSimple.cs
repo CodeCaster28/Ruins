@@ -16,10 +16,13 @@ public class PlatformSimple : MonoBehaviour {
 	private Rigidbody rBody;
 	private Vector3 startPos;
 	private bool stop;
+	private bool touchingPlayer;
+	private GameObject player;
 
 	void Start() {
 		rBody = GetComponent<Rigidbody>();
 		stop = false;
+		touchingPlayer = false;
 		startPos = transform.position;
 		switch (dir) {
 			case Direction.Up:
@@ -43,8 +46,15 @@ public class PlatformSimple : MonoBehaviour {
 		}
 	}
 
+	private void Update() {
+		if (touchingPlayer == true)
+			CheckPlayerBlocked(player);
+	}
+
 	void FixedUpdate() {
-		MoveToPosition();
+
+
+			MoveToPosition();
 	}
 
 	public Vector3 GetDirection {
@@ -74,14 +84,23 @@ public class PlatformSimple : MonoBehaviour {
 			Gizmos.DrawRay(transform.position + GetDirEditor() * distance / 3, backp * 0.4f);
 		}
 	}
-	/*
-		private void OnCollisionEnter(Collision other) {
-			if (other.gameObject.tag == "Player") {
-				stop = true;
-			}
-		}*/
 
-	public Vector3 GetDirEditor(){
+	private void OnCollisionStay(Collision other) {
+		if(other.gameObject.tag == "Player") {
+			player = other.gameObject;
+			touchingPlayer = true;
+		}
+	}
+
+	private void CheckPlayerBlocked(GameObject player) {
+		if (player.GetComponent<CollisionCtrl>().Blocked) {
+			rBody.MovePosition(transform.position - direction * 0.05f * speed);
+			enabled = false;
+			stop = true;
+		}
+	}
+
+	private Vector3 GetDirEditor(){
 		switch (dir) {
 			case Direction.Up:
 				return Vector3.up;

@@ -52,9 +52,7 @@ public class PlatformSimple : MonoBehaviour {
 	}
 
 	void FixedUpdate() {
-
-
-			MoveToPosition();
+		MoveToPosition();
 	}
 
 	public Vector3 GetDirection {
@@ -92,12 +90,20 @@ public class PlatformSimple : MonoBehaviour {
 		}
 	}
 
-	private void CheckPlayerBlocked(GameObject player) {
+	private void OnCollisionExit(Collision other) {
+		if (other.gameObject.tag == "Player") {
+			player = null;
+			touchingPlayer = false;
+		}
+	}
+
+		private void CheckPlayerBlocked(GameObject player) {
 		if (player.GetComponent<CollisionCtrl>().Blocked) {
-			rBody.MovePosition(transform.position - direction * 0.05f * speed);
-			enabled = false;
+			//rBody.MovePosition(transform.position - direction * 0.05f * speed);
 			stop = true;
 		}
+		else
+			stop = false;
 	}
 
 	private Vector3 GetDirEditor(){

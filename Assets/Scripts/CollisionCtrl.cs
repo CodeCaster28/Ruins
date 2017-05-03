@@ -28,6 +28,7 @@ public class CollisionCtrl : MonoBehaviour {
 	private void FixedUpdate() {
 		normals.Clear();
 		blocked = false;
+		rBody = null;
 	}
 
 	// Get collection of rigidbody colliders

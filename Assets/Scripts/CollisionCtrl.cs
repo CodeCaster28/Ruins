@@ -20,7 +20,7 @@ public class CollisionCtrl : MonoBehaviour {
 
 	private void Update() {
 		foreach (Vector3 normal in normals) {
-			// Debug.DrawLine(transform.position + normal, transform.position, Color.red);
+			Debug.DrawLine(transform.position + normal, transform.position, Color.red);
 			// Debug.Log(normal);
 		}
 	}

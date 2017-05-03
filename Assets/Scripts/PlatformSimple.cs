@@ -92,7 +92,6 @@ public class PlatformSimple : MonoBehaviour {
 
 	private void OnCollisionExit(Collision other) {
 		if (other.gameObject.tag == "Player") {
-			player = null;
 			touchingPlayer = false;
 		}
 	}

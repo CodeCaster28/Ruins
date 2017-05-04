@@ -31,13 +31,13 @@ public class CameraCtrl : MonoBehaviour {
 		MoveToTarget();
 	}
 
-	//== Publics ========================
+	//== Public ========================
 
 	public float RotOffset {
 		get { return rotOffset; }
 	}
 
-	//== Methods ========================
+	//== Private ========================
 
 	private void GetInput() {
 		rotateInput = Input.GetAxis("HorCamera");

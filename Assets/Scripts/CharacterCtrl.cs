@@ -12,7 +12,6 @@ public class CharacterCtrl : MonoBehaviour {
 	public float jumpForce;
 
 	private GameObject playerModel;
-	//private CollisionCtrl collision;
 	private Rigidbody rBody;
 	private Feets feets;
 	private float currentVel;
@@ -37,35 +36,42 @@ public class CharacterCtrl : MonoBehaviour {
 		currentVel = maxVel;
 		targetRotation = transform.rotation;
 		forwardInput = sideInput = 0;
+
 		Initialize();
 	}
 	
 	private void Initialize() {
 		playerModel = transform.Find("Base/Model").gameObject;
-		if (playerModel == null) Debug.Log("No player model 'Player/Base/Model' gameobject found!");
-		if (transform.Find("Base").gameObject == null) Debug.Log("No player base 'Player/Base' gameobject found!");
-		rBody = transform.Find("Base").gameObject.GetComponent<Rigidbody>();
-		if (rBody == null) Debug.Log("No rigidbody assigned to 'Player/Base'!");
-		// collision = transform.Find("Base").gameObject.GetComponent<CollisionCtrl>();
-		// if (collision == null) Debug.Log("No collisionctrl script assigned to 'Player/Base'!");
-		if (transform.Find("Base/Feets").gameObject == null) Debug.Log("No player model 'Player/Base/Feets' gameobject found!");
-		feets = transform.Find("Base/Feets").gameObject.GetComponent<Feets>();
+
+		if (playerModel == null)
+			Debug.Log("No player model 'Player/Base/Model' gameobject found!");
+		if (transform.Find("Base").gameObject == null)
+			Debug.Log("No player base 'Player/Base' gameobject found!");
+		else
+			rBody = transform.Find("Base").gameObject.GetComponent<Rigidbody>();
+
+		if (rBody == null)
+			Debug.Log("No rigidbody assigned to 'Player/Base'!");
+		if (transform.Find("Base/Feets").gameObject == null)
+			Debug.Log("No player model 'Player/Base/Feets' gameobject found!");
+		else
+			feets = transform.Find("Base/Feets").gameObject.GetComponent<Feets>();
 	}
 
-	//== Publics ========================
+	//== Public ========================
 
 	public Quaternion TargetRotation {
 		get { return targetRotation; }
 	}
 
-	//== Methods ========================
+	//== Private ========================
 
 	private void GetInput() {
 		forwardInput = Input.GetAxis("Vertical");
 		sideInput = Input.GetAxis("Horizontal");
-		if (Input.GetButtonDown("Jump")) {
+
+		if (Input.GetButtonDown("Jump"))
 			Jump();
-		}
 	}
 
 	private bool IsGrounded() {
@@ -78,10 +84,10 @@ public class CharacterCtrl : MonoBehaviour {
 		var momentum = Vector3.zero;
 
 		// Generate momentum from rigidbody player standing on
-		// Debug.Log("Last collider picked: " + feets.GetComponent<Feets>().GetLastCollider());
 		if (feets.GetLastCollider() != null) {
 			momentum = feets.GetLastCollider().GetComponent<Rigidbody>().velocity;
-			if (momentum.y > 0) momentum.y = 0;
+			if (momentum.y > 0)
+				momentum.y = 0;
 		}
 		else
 			momentum = Vector3.zero;
@@ -90,7 +96,7 @@ public class CharacterCtrl : MonoBehaviour {
 		if (Mathf.Abs(forwardInput) > inputDelay || Mathf.Abs(sideInput) > inputDelay) {
 			currentVel = maxVel;
 			direction = new Vector3(sideInput, 0f, forwardInput);
-
+	
 			// Moving based on camera rotation:
 			direction = Quaternion.Euler(0, pairedCamera.GetComponent<CameraCtrl>().RotOffset, 0) * direction;
 
@@ -103,13 +109,12 @@ public class CharacterCtrl : MonoBehaviour {
 			rBody.drag = 0;
 			vel.y = rBody.velocity.y;
 			rBody.velocity = vel + momentum;
-
 			targetRotation = Quaternion.LookRotation(direction, Vector3.up);
 		}
 		else if (IsGrounded()) {
-				var vel = Vector3.zero;
-				rBody.velocity = momentum;
-				rBody.drag = (momentum == Vector3.zero ? 60 : 0);
+			var vel = Vector3.zero;
+			rBody.velocity = momentum;
+			rBody.drag = (momentum == Vector3.zero ? 60 : 0);
 		}
 		else
 			rBody.drag = 0;
@@ -119,7 +124,6 @@ public class CharacterCtrl : MonoBehaviour {
 		if (IsGrounded() == true) {
 			StartCoroutine(Jumping());
 			rBody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-			//Debug.Log("Jump");
 		}
 		else {
 			if (jumpCoroutine != null)
@@ -136,7 +140,6 @@ public class CharacterCtrl : MonoBehaviour {
 	//== Coroutines =====================
 
 	IEnumerator DelayJump() {
-
 		for(int i = 0; i < 3; i++) {
 			yield return new WaitForSeconds(0.03f);
 			if (IsGrounded() == true) {

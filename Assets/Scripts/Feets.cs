@@ -32,7 +32,7 @@ public class Feets : MonoBehaviour {
 		}
 	}
 
-	//== Publics ========================
+	//== Public ========================
 
 	public bool ForceFlight {
 		get { return forceFlight; }

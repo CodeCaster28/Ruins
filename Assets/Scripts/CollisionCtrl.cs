@@ -19,6 +19,7 @@ public class CollisionCtrl : MonoBehaviour {
 	}
 
 	private void Update() {
+		Debug.Log(GetComponent<Rigidbody>().velocity);
 		foreach (Vector3 normal in normals) {
 			Debug.DrawLine(transform.position + normal, transform.position, Color.red);
 			// Debug.Log(normal);

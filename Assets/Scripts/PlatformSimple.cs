@@ -10,13 +10,14 @@ public class PlatformSimple : MonoBehaviour {
 	public enum Direction { Up, Down, Left, Right, Forward, Back }
 	[SerializeField]
 	public Direction dir;
-	public enum BlockHandle { None, Stop, Break}
+	public enum BlockHandle { None, Stop, Break, Pong}
 	[SerializeField]
 	public BlockHandle blockHandle;
 	public float distance;
 	public bool pingPong;
 	public float speed;
 
+	private bool ignoreBlocked;
 	private Vector3 direction;
 	private Rigidbody rBody;
 	private Vector3 startPos;
@@ -30,6 +31,7 @@ public class PlatformSimple : MonoBehaviour {
 	void Start() {
 		rBody = GetComponent<Rigidbody>();
 		stop = false;
+		ignoreBlocked = false;
 		touchingPlayer = false;
 		startPos = transform.position;
 		audioSrc = GetComponent<AudioSource>();
@@ -111,25 +113,34 @@ public class PlatformSimple : MonoBehaviour {
 
 	private void CheckPlayerBlocked(GameObject player) {
 		if (player.GetComponent<CollisionCtrl>().Blocked) {
-			PlatformBlocked(true);
+			PlatformBlocked();
 		}
 		else
-			PlatformBlocked(false);
+			stop = false;
 	}
 
-	private void PlatformBlocked(bool block) {
+	private void PlatformBlocked() {
 		switch (blockHandle) {
 			case BlockHandle.None:
 				break;
 			case BlockHandle.Stop:
-				stop = block;
+				stop = true;
 				break;
 			case BlockHandle.Break:
-				if (block == true) {
 					audioSrc.PlayOneShot(audioSrc.clip);
 					GetComponent<Collider>().enabled = false;
 					GetComponent<Renderer>().enabled = false;
 					Destroy(gameObject, audioSrc.clip.length);
+				break;
+			case BlockHandle.Pong:
+				if (ignoreBlocked == false) {
+					ignoreBlocked = true;
+					
+					Debug.Log("Old: " + startPos + " , New: " + (startPos + (distance * direction)));
+
+					startPos = startPos + (distance * direction);
+					direction *= -1;
+					StartCoroutine(IgnoreBlocked());
 				}
 				break;
 		}
@@ -160,7 +171,7 @@ public class PlatformSimple : MonoBehaviour {
 				rBody.MovePosition(transform.position + direction * Time.deltaTime * speed);
 			}
 			else {
-				rBody.MovePosition(startPos + direction * distance);    // Fix position excess
+				//rBody.MovePosition(startPos + direction * distance);    // Fix position excess
 				stop = true;
 				if (pingPong) {
 					startPos = transform.position;
@@ -169,5 +180,11 @@ public class PlatformSimple : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	IEnumerator IgnoreBlocked() {
+		yield return new WaitForSeconds(0.2f);
+		ignoreBlocked = false;
+		yield return null;
 	}
 }

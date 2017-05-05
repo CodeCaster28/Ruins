@@ -62,7 +62,8 @@ public class CameraCtrl : MonoBehaviour {
 	}
 
 	private void MoveToTarget() {
-		transform.position = Vector3.Lerp(transform.position, target.transform.position + offset, 11f);
+		if(target != null)
+			transform.position = Vector3.Lerp(transform.position, target.transform.position + offset, 11f);
 	}
 
 	//== Coroutines =====================

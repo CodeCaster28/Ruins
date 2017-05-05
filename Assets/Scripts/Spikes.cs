@@ -4,5 +4,11 @@ using UnityEngine;
 
 public class Spikes : MonoBehaviour {
 
+	public int damage = 1;
 
+	private void OnTriggerStay(Collider other) {
+		if(other.tag == "Player") {
+			PlayerData.Master.Damage(damage);
+		}
+	}
 }

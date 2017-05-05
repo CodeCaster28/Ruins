@@ -8,7 +8,7 @@ public class Spikes : MonoBehaviour {
 
 	private void OnTriggerStay(Collider other) {
 		if(other.tag == "Player") {
-			PlayerData.Master.Damage(damage);
+			other.transform.parent.GetComponent<Player>().Damage(damage);
 		}
 	}
 }

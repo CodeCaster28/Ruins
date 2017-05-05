@@ -20,6 +20,7 @@ public class CharacterCtrl : MonoBehaviour {
 	private Vector3 direction;
 	private float forwardInput, sideInput;
 	private Coroutine jumpCoroutine = null;
+	private bool disableInputs;
 
 	//== Mono ===========================
 
@@ -36,7 +37,7 @@ public class CharacterCtrl : MonoBehaviour {
 		currentVel = maxVel;
 		targetRotation = transform.rotation;
 		forwardInput = sideInput = 0;
-
+		disableInputs = false;
 		Initialize();
 	}
 	
@@ -64,14 +65,27 @@ public class CharacterCtrl : MonoBehaviour {
 		get { return targetRotation; }
 	}
 
+	public bool DisableInputs {
+		get { return disableInputs; }
+		set { disableInputs = value;
+			rBody.velocity = Vector3.zero;
+			rBody.constraints = RigidbodyConstraints.None;
+			rBody.AddForce(new Vector3(Random.Range(1,3), Random.Range(1, 3), Random.Range(1, 3)) * 1250);
+			rBody.AddTorque(new Vector3(10, Random.Range(-3, 3), 10) * 1000);
+			rBody.drag = 3;
+			rBody.angularDrag = 3;
+		}
+	}
+
 	//== Private ========================
 
 	private void GetInput() {
-		forwardInput = Input.GetAxis("Vertical");
-		sideInput = Input.GetAxis("Horizontal");
-
-		if (Input.GetButtonDown("Jump"))
-			Jump();
+		if (disableInputs == false) {
+			forwardInput = Input.GetAxis("Vertical");
+			sideInput = Input.GetAxis("Horizontal");
+			if (Input.GetButtonDown("Jump"))
+				Jump();
+		}
 	}
 
 	private bool IsGrounded() {

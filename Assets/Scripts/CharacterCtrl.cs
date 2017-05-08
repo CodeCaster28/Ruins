@@ -40,24 +40,6 @@ public class CharacterCtrl : MonoBehaviour {
 		disableInputs = false;
 		Initialize();
 	}
-	
-	private void Initialize() {
-		playerModel = transform.Find("Base/Model").gameObject;
-
-		if (playerModel == null)
-			Debug.Log("No player model 'Player/Base/Model' gameobject found!");
-		if (transform.Find("Base").gameObject == null)
-			Debug.Log("No player base 'Player/Base' gameobject found!");
-		else
-			rBody = transform.Find("Base").gameObject.GetComponent<Rigidbody>();
-
-		if (rBody == null)
-			Debug.Log("No rigidbody assigned to 'Player/Base'!");
-		if (transform.Find("Base/Feets").gameObject == null)
-			Debug.Log("No player model 'Player/Base/Feets' gameobject found!");
-		else
-			feets = transform.Find("Base/Feets").gameObject.GetComponent<Feets>();
-	}
 
 	//== Public ========================
 
@@ -79,8 +61,26 @@ public class CharacterCtrl : MonoBehaviour {
 
 	//== Private ========================
 
+	private void Initialize() {
+		playerModel = transform.Find("Base/Model").gameObject;
+
+		if (playerModel == null)
+			Debug.Log("No player model 'Player/Base/Model' gameobject found!");
+		if (transform.Find("Base").gameObject == null)
+			Debug.Log("No player base 'Player/Base' gameobject found!");
+		else
+			rBody = transform.Find("Base").gameObject.GetComponent<Rigidbody>();
+
+		if (rBody == null)
+			Debug.Log("No rigidbody assigned to 'Player/Base'!");
+		if (transform.Find("Base/Feets").gameObject == null)
+			Debug.Log("No player model 'Player/Base/Feets' gameobject found!");
+		else
+			feets = transform.Find("Base/Feets").gameObject.GetComponent<Feets>();
+	}
+
 	private void GetInput() {
-		if (disableInputs == false) {
+		if (!disableInputs) {
 			forwardInput = Input.GetAxis("Vertical");
 			sideInput = Input.GetAxis("Horizontal");
 			if (Input.GetButtonDown("Jump"))
@@ -89,9 +89,8 @@ public class CharacterCtrl : MonoBehaviour {
 	}
 
 	private bool IsGrounded() {
-		if (feets.OnGround())
-			return true;
-		else return false;
+		return feets.OnGround();
+		//? true : false;
 	}
 
 	private void Run() {
@@ -119,7 +118,7 @@ public class CharacterCtrl : MonoBehaviour {
 				direction = direction / direction.magnitude;
 
 			// Air control velocity is smaller
-			var vel = direction * (IsGrounded() == true ? currentVel : currentVel * 0.93f);
+			var vel = direction * (IsGrounded() ? currentVel : currentVel * 0.93f);
 			rBody.drag = 0;
 			vel.y = rBody.velocity.y;
 			rBody.velocity = vel + momentum;
@@ -135,7 +134,7 @@ public class CharacterCtrl : MonoBehaviour {
 	}
 
 	private void Jump() {
-		if (IsGrounded() == true) {
+		if (IsGrounded()) {
 			StartCoroutine(Jumping());
 			rBody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
 		}
@@ -156,7 +155,7 @@ public class CharacterCtrl : MonoBehaviour {
 	IEnumerator DelayJump() {
 		for(int i = 0; i < 3; i++) {
 			yield return new WaitForSeconds(0.03f);
-			if (IsGrounded() == true) {
+			if (IsGrounded()) {
 				Jump();
 				yield return null;
 			}

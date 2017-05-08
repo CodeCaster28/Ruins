@@ -5,14 +5,19 @@ using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour {
 
+	//== Delegates ======================
+
 	public delegate void DRefreshHearts();
 	public static event DRefreshHearts RefreshHearts;
 
-	private MeshRenderer playerModel;
-	private GameObject player;
+	//== Fields =========================
 
 	public int maxHealth;
 
+	private MeshRenderer playerModel;
+	private GameObject player;
+	
+	//== Mono ===========================
 
 	private void Start() {
 		PlayerData.health = maxHealth;
@@ -20,7 +25,6 @@ public class Player : MonoBehaviour {
 		PlayerData.isPlayerInvictible = false;
 		player = GameObject.Find("Player");
 		playerModel = player.transform.Find("Base/Model").gameObject.GetComponent<MeshRenderer>();
-		//GuiRefreshHearts();
 		if (RefreshHearts != null) {
 			RefreshHearts();
 		}
@@ -29,8 +33,7 @@ public class Player : MonoBehaviour {
 	//== Public ========================
 
 	public void Damage(int x) {
-		if (PlayerData.isPlayerInvictible == false) {
-
+		if (!PlayerData.isPlayerInvictible) {
 			PlayerData.health -= x;
 			if (PlayerData.health > PlayerData.maxHealth) {
 				PlayerData.health = PlayerData.maxHealth;
@@ -73,7 +76,6 @@ public class Player : MonoBehaviour {
 	}
 
 	IEnumerator KillPlayer() {
-
 		Death();
 		yield return new WaitForSeconds(2.0f);
 		SceneManager.LoadScene(SceneManager.GetActiveScene().name);

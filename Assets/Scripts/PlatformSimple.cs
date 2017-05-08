@@ -58,7 +58,7 @@ public class PlatformSimple : MonoBehaviour {
 	}
 
 	private void Update() {
-		if (touchingPlayer == true)
+		if (touchingPlayer)
 			CheckPlayerBlocked(player);
 	}
 
@@ -69,7 +69,12 @@ public class PlatformSimple : MonoBehaviour {
 	private void OnDrawGizmos() {
 		Gizmos.color = new Color(0.15f, 0.85f, 1, 1);
 		Gizmos.DrawSphere(transform.position, 0.3f);
-		Gizmos.DrawRay(transform.position, GetDirEditor() * distance);
+		if (distance != 0) {
+			Gizmos.DrawRay(transform.position, GetDirEditor() * distance);
+			DrawArrow(false);
+			if (pingPong) DrawArrow(true);
+		}
+		/*
 		Vector3 right = Quaternion.LookRotation(GetDirEditor() * distance) * Quaternion.Euler(0, 180 + 20.0f, 0) * new Vector3(0, 0, 1);
 		Vector3 left = Quaternion.LookRotation(GetDirEditor() * distance) * Quaternion.Euler(0, 180 - 20.0f, 0) * new Vector3(0, 0, 1);
 		Vector3 front = Quaternion.LookRotation(GetDirEditor() * distance) * Quaternion.Euler(-90 + 20.0f, 0, 0) * new Vector3(0, 1, 0);
@@ -78,7 +83,7 @@ public class PlatformSimple : MonoBehaviour {
 		Gizmos.DrawRay(transform.position + GetDirEditor() * distance, left * 0.5f);
 		Gizmos.DrawRay(transform.position + GetDirEditor() * distance, front * 0.5f);
 		Gizmos.DrawRay(transform.position + GetDirEditor() * distance, back * 0.5f);
-		if (pingPong == true) {
+		if (pingPong) {
 			Vector3 rightp = Quaternion.LookRotation(GetDirEditor() * distance) * Quaternion.Euler(0, 0 + 20.0f, 0) * new Vector3(0, 0, 1);
 			Vector3 leftp = Quaternion.LookRotation(GetDirEditor() * distance) * Quaternion.Euler(0, 0 - 20.0f, 0) * new Vector3(0, 0, 1);
 			Vector3 frontp = Quaternion.LookRotation(GetDirEditor() * distance) * Quaternion.Euler(-270 + 20.0f, 0, 0) * new Vector3(0, 1, 0);
@@ -87,7 +92,32 @@ public class PlatformSimple : MonoBehaviour {
 			Gizmos.DrawRay(transform.position + GetDirEditor() * distance / 3, leftp * 0.4f);
 			Gizmos.DrawRay(transform.position + GetDirEditor() * distance / 3, frontp * 0.4f);
 			Gizmos.DrawRay(transform.position + GetDirEditor() * distance / 3, backp * 0.4f);
+		}*/
+	}
+
+	private void DrawArrow(bool pong) {
+
+		float headSize = 0.5f;
+		float bank = 20.0f;
+		float offset = 0;
+		Vector3 vector = new Vector3(0, 0, 1);
+		Quaternion rotation = Quaternion.Euler(0, 0, 0);
+		if (pong) {
+			headSize *= 0.8f;
+			offset = -180;
 		}
+		for (int i = 0; i < 4; i++) {
+			if (i % 2 == 1)
+				bank *= -1;
+			if (i > 1) {
+				vector = new Vector3(0, 1, 0);
+				rotation = Quaternion.Euler(-90 + offset + bank, 0, 0);
+			}
+			else
+				rotation = Quaternion.Euler(0, 180 + offset + bank, 0);
+			Gizmos.DrawRay(transform.position + GetDirEditor() * ( !pong? distance : distance / 3), (Quaternion.LookRotation(GetDirEditor() * distance) * rotation * vector) * headSize);
+		}
+
 	}
 
 	private void OnCollisionStay(Collision other) {
@@ -133,7 +163,7 @@ public class PlatformSimple : MonoBehaviour {
 					Destroy(gameObject, audioSrc.clip.length);
 				break;
 			case BlockHandle.Pong:
-				if (ignoreBlocked == false) {
+				if (!ignoreBlocked) {
 					ignoreBlocked = true;
 					
 					Debug.Log("Old: " + startPos + " , New: " + (startPos + (distance * direction)));
@@ -166,7 +196,7 @@ public class PlatformSimple : MonoBehaviour {
 	}
 
 	private void MoveToPosition() {
-		if (stop == false) {
+		if (!stop) {
 			if (Vector3.Distance(transform.position, startPos) < distance) {
 				rBody.MovePosition(transform.position + direction * Time.deltaTime * speed);
 			}
@@ -181,6 +211,8 @@ public class PlatformSimple : MonoBehaviour {
 			}
 		}
 	}
+
+	//== Coroutines =====================
 
 	IEnumerator IgnoreBlocked() {
 		yield return new WaitForSeconds(0.2f);

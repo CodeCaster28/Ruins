@@ -4,7 +4,11 @@ using UnityEngine;
 
 public class Spikes : MonoBehaviour {
 
+	//== Fields =========================
+
 	public int damage = 1;
+
+	//== Private =========================
 
 	private void OnTriggerStay(Collider other) {
 		if(other.tag == "Player") {

@@ -4,14 +4,24 @@ using UnityEngine;
 
 public class CanvasCtrl : MonoBehaviour {
 
+	//== Fields =========================
+
 	public GameObject heartFull;
 	public GameObject heartEmpty;
 	private List<GameObject> hearts;
+
+	//== Mono ===========================
 
 	private void Start() {
 		hearts = new List<GameObject>();
 		Player.RefreshHearts += RefreshHearts;
 	}
+
+	private void OnDestroy() {
+		Player.RefreshHearts -= RefreshHearts;
+	}
+
+	//== Private ========================
 
 	private void RefreshHearts() {
 		GameObject heart;
@@ -39,9 +49,5 @@ public class CanvasCtrl : MonoBehaviour {
 			heart.GetComponent<RectTransform>().anchoredPosition = new Vector3(50 + n, -30, 0);
 			n += 32;
 		}
-	}
-
-	private void OnDestroy() {
-		Player.RefreshHearts -= RefreshHearts;
 	}
 }

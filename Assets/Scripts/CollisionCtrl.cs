@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CollisionCtrl : MonoBehaviour {
 
+	//== Fields =========================
+
 	private List<Vector3> normals;
 	private Rigidbody rBody;
 	private bool blocked;
@@ -11,6 +13,8 @@ public class CollisionCtrl : MonoBehaviour {
 	public bool Blocked {
 		get { return blocked;}
 	}
+
+	//== Mono ===========================
 
 	private void Start() {
 		normals = new List<Vector3>();
@@ -35,7 +39,7 @@ public class CollisionCtrl : MonoBehaviour {
 	private void OnCollisionStay(Collision other) {
 		rBody = other.gameObject.GetComponent<Rigidbody>();
 		if (rBody != null) {
-			if (rBody.isKinematic == true) {
+			if (rBody.isKinematic) {
 				foreach (ContactPoint contact in other.contacts) {
 					normals.Add(contact.normal);
 					CheckForOpposites(contact.normal);
@@ -43,6 +47,8 @@ public class CollisionCtrl : MonoBehaviour {
 			}
 		}
 	}
+
+	//== Private ========================
 
 	// Check if there is any opposite normals from kinematic rigidbodies
 	private void CheckForOpposites(Vector3 x) {

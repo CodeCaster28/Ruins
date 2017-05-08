@@ -44,14 +44,13 @@ public class CameraCtrl : MonoBehaviour {
 	}
 
 	private void SetTargetRotation() {
-
-		if (rotateInput > 0 && rotateAxisInUse == false) {
+		if (rotateInput > 0 && !rotateAxisInUse) {
 			rotOffset += 45;
 			rotateAxisInUse = true;
 			StartCoroutine(ResetButton());
 			iTween.RotateBy(gameObject, new Vector3(0, 0.125f, 0), 0.17f);
 		}
-		else if (rotateInput < 0 && rotateAxisInUse == false) {
+		else if (rotateInput < 0 && !rotateAxisInUse) {
 			rotOffset -= 45;
 			rotateAxisInUse = true;
 			StartCoroutine(ResetButton());

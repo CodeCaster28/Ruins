@@ -40,16 +40,10 @@ public class Feets : MonoBehaviour {
 	}
 
 	public bool OnGround() {
-		if (numColliders == 0 || forceFlight == true)
-			return false;
-		else return true;
+		return (numColliders == 0 || forceFlight) ? false : true;
 	}
-
+	
 	public Collider GetLastCollider() {
-
-		if (colliders.Count > 0) {
-			return colliders[colliders.Count - 1];
-		}
-		else return null;
+		return (colliders.Count > 0) ? colliders[colliders.Count - 1] : null;
 	}
 }

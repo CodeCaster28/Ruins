@@ -53,7 +53,6 @@ public class Player : MonoBehaviour {
 			StartCoroutine(KillPlayer());
 		}
 		else {
-			print("DMG");
 			StartCoroutine(DamageCooldown());
 		}
 		if (RefreshHearts != null) {
@@ -91,7 +90,7 @@ public class Player : MonoBehaviour {
 	}
 
 	IEnumerator HealEffect() {
-		Color targetColor = new Color(0, 1f, 0, 1f);
+		Color targetColor = new Color(0, 0.7f, 0, 1f);
 		float n = 0;
 		foreach (ParticleSystem particle in healParticles) {
 			particle.Play();

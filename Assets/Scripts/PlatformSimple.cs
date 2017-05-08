@@ -145,9 +145,6 @@ public class PlatformSimple : MonoBehaviour {
 			case BlockHandle.Pong:
 				if (!ignoreBlocked) {
 					ignoreBlocked = true;
-					
-					Debug.Log("Old: " + startPos + " , New: " + (startPos + (distance * direction)));
-
 					startPos = startPos + (distance * direction);
 					direction *= -1;
 					StartCoroutine(IgnoreBlocked());

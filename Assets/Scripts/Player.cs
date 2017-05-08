@@ -18,7 +18,7 @@ public class Player : MonoBehaviour {
 	private MeshRenderer playerModel;
 	private GameObject player;
 	private Coroutine healEffect;
-	private Coroutine damageCooldown;
+	public float damageCooldown;
 	private Color defaultColor;
 
 	//== Mono ===========================
@@ -53,7 +53,7 @@ public class Player : MonoBehaviour {
 		}
 		else {
 			print("DMG");
-			damageCooldown = StartCoroutine(DamageCooldown());
+			StartCoroutine(DamageCooldown());
 		}
 		if (RefreshHearts != null) {
 			RefreshHearts();
@@ -73,7 +73,7 @@ public class Player : MonoBehaviour {
 		player.GetComponent<CharacterCtrl>().DisableInputs = true;
 		player.GetComponent<CharacterCtrl>().enabled = false;
 	}
-	
+
 	//== Coroutines =====================
 
 	IEnumerator DamageCooldown() {

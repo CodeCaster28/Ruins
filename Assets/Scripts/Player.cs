@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,15 +17,19 @@ public class Player : MonoBehaviour {
 
 	private MeshRenderer playerModel;
 	private GameObject player;
-	
+	private Coroutine healEffect;
+	private Coroutine damageCooldown;
+	private Color defaultColor;
+
 	//== Mono ===========================
 
 	private void Start() {
 		PlayerData.health = maxHealth;
 		PlayerData.maxHealth = maxHealth;
-		PlayerData.isPlayerInvictible = false;
+		PlayerData.isPlayerInvincible = false;
 		player = GameObject.Find("Player");
 		playerModel = player.transform.Find("Base/Model").gameObject.GetComponent<MeshRenderer>();
+		defaultColor = playerModel.material.color;
 		if (RefreshHearts != null) {
 			RefreshHearts();
 		}
@@ -32,38 +37,47 @@ public class Player : MonoBehaviour {
 
 	//== Public ========================
 
-	public void Damage(int x) {
-		if (!PlayerData.isPlayerInvictible) {
-			PlayerData.health -= x;
-			if (PlayerData.health > PlayerData.maxHealth) {
-				PlayerData.health = PlayerData.maxHealth;
-			}
-			if (PlayerData.health < 0) {
-				PlayerData.health = 0;
-			}
-			if (RefreshHearts != null) {
-				RefreshHearts();
-			}
-			if (PlayerData.health <= 0) {
-
-				PlayerData.isPlayerInvictible = true;
-				StartCoroutine(KillPlayer());
-			}
-			else StartCoroutine(DamageCooldown());
-		}
+	public void ModifyHealth(int x) {
+			if (x < 0 && !PlayerData.isPlayerInvincible)
+				Damage(x);
+			else if (x > 0 && PlayerData.health < PlayerData.maxHealth)
+				Heal(x);
 	}
 
 	//== Private ========================
+
+	private void Damage(int x) {
+		PlayerData.health = PlayerData.health.CalculateLimited(x, maxHealth);
+		if (PlayerData.health == 0) {
+			StartCoroutine(KillPlayer());
+		}
+		else {
+			print("DMG");
+			damageCooldown = StartCoroutine(DamageCooldown());
+		}
+		if (RefreshHearts != null) {
+			RefreshHearts();
+		}
+	}
+
+	private void Heal(int x) {
+		PlayerData.health = PlayerData.health.CalculateLimited(x, maxHealth);
+		if (RefreshHearts != null) {
+			RefreshHearts();
+		}
+		if (healEffect != null) StopCoroutine(healEffect);
+		healEffect = StartCoroutine(HealEffect());
+	}
 
 	private void Death() {
 		player.GetComponent<CharacterCtrl>().DisableInputs = true;
 		player.GetComponent<CharacterCtrl>().enabled = false;
 	}
-
+	
 	//== Coroutines =====================
 
 	IEnumerator DamageCooldown() {
-		PlayerData.isPlayerInvictible = true;
+		PlayerData.isPlayerInvincible = true;
 		for (int i = 0; i < PlayerData.damageCooldown * 10; i++) {
 			yield return new WaitForSeconds(PlayerData.damageCooldown / 20);
 			var c = playerModel.material.color;
@@ -71,7 +85,21 @@ public class Player : MonoBehaviour {
 			yield return new WaitForSeconds(PlayerData.damageCooldown / 20);
 			playerModel.material.color = new Color(c.r, c.g, c.b, 1f);
 		}
-		PlayerData.isPlayerInvictible = false;
+		PlayerData.isPlayerInvincible = false;
+		yield return null;
+	}
+
+	IEnumerator HealEffect() {
+		Color targetColor = new Color(0, 1f, 0, 1f);
+		float n = 0;
+		for (int i = 0; i < 10; i++) {
+			playerModel.material.color = Color.Lerp(targetColor, defaultColor, n);
+			playerModel.material.SetColor("_EmissionColor", Color.Lerp(targetColor, Color.black, n));
+			n += 0.1f;
+			yield return new WaitForSeconds(0.04f);
+		}
+		playerModel.material.color = defaultColor;
+		playerModel.material.SetColor("_EmissionColor", Color.black);
 		yield return null;
 	}
 

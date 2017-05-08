@@ -12,7 +12,7 @@ public class Spikes : MonoBehaviour {
 
 	private void OnTriggerStay(Collider other) {
 		if(other.tag == "Player") {
-			other.transform.parent.GetComponent<Player>().Damage(damage);
+			other.transform.parent.GetComponent<Player>().ModifyHealth(-damage);
 		}
 	}
 }

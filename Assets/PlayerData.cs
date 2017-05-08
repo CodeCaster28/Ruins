@@ -8,6 +8,8 @@ public class PlayerData : GenericSingletonClass<PlayerData> {
 
 	public static int maxHealth;
 	public static int health;
-	public static bool isPlayerInvictible;
+	public static bool isPlayerInvincible;
 	public static float damageCooldown = 1.5f;
+
+
 }

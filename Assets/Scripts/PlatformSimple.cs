@@ -74,29 +74,9 @@ public class PlatformSimple : MonoBehaviour {
 			DrawArrow(false);
 			if (pingPong) DrawArrow(true);
 		}
-		/*
-		Vector3 right = Quaternion.LookRotation(GetDirEditor() * distance) * Quaternion.Euler(0, 180 + 20.0f, 0) * new Vector3(0, 0, 1);
-		Vector3 left = Quaternion.LookRotation(GetDirEditor() * distance) * Quaternion.Euler(0, 180 - 20.0f, 0) * new Vector3(0, 0, 1);
-		Vector3 front = Quaternion.LookRotation(GetDirEditor() * distance) * Quaternion.Euler(-90 + 20.0f, 0, 0) * new Vector3(0, 1, 0);
-		Vector3 back = Quaternion.LookRotation(GetDirEditor() * distance) * Quaternion.Euler(-90 - 20.0f, 0, 0) * new Vector3(0, 1, 0);
-		Gizmos.DrawRay(transform.position + GetDirEditor() * distance, right * 0.5f);
-		Gizmos.DrawRay(transform.position + GetDirEditor() * distance, left * 0.5f);
-		Gizmos.DrawRay(transform.position + GetDirEditor() * distance, front * 0.5f);
-		Gizmos.DrawRay(transform.position + GetDirEditor() * distance, back * 0.5f);
-		if (pingPong) {
-			Vector3 rightp = Quaternion.LookRotation(GetDirEditor() * distance) * Quaternion.Euler(0, 0 + 20.0f, 0) * new Vector3(0, 0, 1);
-			Vector3 leftp = Quaternion.LookRotation(GetDirEditor() * distance) * Quaternion.Euler(0, 0 - 20.0f, 0) * new Vector3(0, 0, 1);
-			Vector3 frontp = Quaternion.LookRotation(GetDirEditor() * distance) * Quaternion.Euler(-270 + 20.0f, 0, 0) * new Vector3(0, 1, 0);
-			Vector3 backp = Quaternion.LookRotation(GetDirEditor() * distance) * Quaternion.Euler(-270 - 20.0f, 0, 0) * new Vector3(0, 1, 0);
-			Gizmos.DrawRay(transform.position + GetDirEditor() * distance / 3, rightp * 0.4f);
-			Gizmos.DrawRay(transform.position + GetDirEditor() * distance / 3, leftp * 0.4f);
-			Gizmos.DrawRay(transform.position + GetDirEditor() * distance / 3, frontp * 0.4f);
-			Gizmos.DrawRay(transform.position + GetDirEditor() * distance / 3, backp * 0.4f);
-		}*/
 	}
 
 	private void DrawArrow(bool pong) {
-
 		float headSize = 0.5f;
 		float bank = 20.0f;
 		float offset = 0;

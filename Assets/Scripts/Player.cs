@@ -16,9 +16,9 @@ public class Player : MonoBehaviour {
 	public int maxHealth;
 
 	private MeshRenderer playerModel;
+	private ParticleSystem[] healParticles;
 	private GameObject player;
 	private Coroutine healEffect;
-	public float damageCooldown;
 	private Color defaultColor;
 
 	//== Mono ===========================
@@ -29,6 +29,7 @@ public class Player : MonoBehaviour {
 		PlayerData.isPlayerInvincible = false;
 		player = GameObject.Find("Player");
 		playerModel = player.transform.Find("Base/Model").gameObject.GetComponent<MeshRenderer>();
+		healParticles = player.transform.Find("Base/HealParticle").GetComponentsInChildren<ParticleSystem>();
 		defaultColor = playerModel.material.color;
 		if (RefreshHearts != null) {
 			RefreshHearts();
@@ -92,6 +93,9 @@ public class Player : MonoBehaviour {
 	IEnumerator HealEffect() {
 		Color targetColor = new Color(0, 1f, 0, 1f);
 		float n = 0;
+		foreach (ParticleSystem particle in healParticles) {
+			particle.Play();
+		}
 		for (int i = 0; i < 10; i++) {
 			playerModel.material.color = Color.Lerp(targetColor, defaultColor, n);
 			playerModel.material.SetColor("_EmissionColor", Color.Lerp(targetColor, Color.black, n));

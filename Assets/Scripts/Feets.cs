@@ -26,6 +26,8 @@ public class Feets : MonoBehaviour {
 	}
 
 	private void OnTriggerExit(Collider other) {
+
+		// Always tag triggers with tag other than "Untagged" or they will be considered solid by player feets
 		if (other.tag == "Untagged") {
 			numColliders--;
 			colliders.Remove(other);

@@ -23,11 +23,15 @@ public class CharacterCtrl : MonoBehaviour {
 	private Coroutine jumpCoroutine = null;
 	private bool disableInputs;
 	private bool isAttacking;
+	private float isAttackingTimer;
 
 	//== Mono ===========================
 
 	void Update() {
 		GetInput();
+		if (isAttacking && Time.time > isAttackingTimer) {
+			isAttacking = false;
+		}
 	}
 
 	private void FixedUpdate() {
@@ -161,11 +165,11 @@ public class CharacterCtrl : MonoBehaviour {
 		weaponModel.transform.rotation = targetRotation;
 	}
 
-	// TODO: fix double attack with other way than setting cooldown
 	private void Attack() {
 		if (weaponModel.GetCurrentAnimatorStateInfo(0).IsName("wait")) {
 			weaponModel.SetTrigger("Attack");
-			StartCoroutine(Attacking());
+			isAttacking = true;
+			isAttackingTimer = Time.time + (PlayerData.attackSpeed * 0.65f);
 		}
 	}
 	
@@ -179,13 +183,6 @@ public class CharacterCtrl : MonoBehaviour {
 				yield return null;
 			}
 		}
-		yield return null;
-	}
-
-	IEnumerator Attacking() {
-		isAttacking = true;
-		yield return new WaitForSeconds(PlayerData.attackSpeed);
-		isAttacking = false;
 		yield return null;
 	}
 

@@ -11,7 +11,9 @@ public class CharacterCtrl : MonoBehaviour {
 	public GameObject pairedCamera;
 	public float jumpForce;
 
+	private bool playerBlockAttack;
 	private GameObject playerModel;
+	private Animator weaponModel;
 	private Rigidbody rBody;
 	private Feets feets;
 	private float currentVel;
@@ -34,6 +36,7 @@ public class CharacterCtrl : MonoBehaviour {
 	}
 
 	void Start () {
+		playerBlockAttack = false;
 		currentVel = maxVel;
 		targetRotation = transform.rotation;
 		forwardInput = sideInput = 0;
@@ -63,14 +66,15 @@ public class CharacterCtrl : MonoBehaviour {
 
 	private void Initialize() {
 		playerModel = transform.Find("Base/Model").gameObject;
-
+		weaponModel = transform.Find("Base/Weapons/Sword").gameObject.GetComponent<Animator>();
 		if (playerModel == null)
 			Debug.Log("No player model 'Player/Base/Model' gameobject found!");
+		if (weaponModel == null)
+			Debug.Log("No weapons 'Player/Base/Weapons' gameobject found!");
 		if (transform.Find("Base").gameObject == null)
 			Debug.Log("No player base 'Player/Base' gameobject found!");
 		else
 			rBody = transform.Find("Base").gameObject.GetComponent<Rigidbody>();
-
 		if (rBody == null)
 			Debug.Log("No rigidbody assigned to 'Player/Base'!");
 		if (transform.Find("Base/Feets").gameObject == null)
@@ -85,6 +89,8 @@ public class CharacterCtrl : MonoBehaviour {
 			sideInput = Input.GetAxis("Horizontal");
 			if (Input.GetButtonDown("Jump"))
 				Jump();
+			if (Input.GetButtonDown("Fire3"))
+				Attack();
 		}
 	}
 
@@ -148,6 +154,14 @@ public class CharacterCtrl : MonoBehaviour {
 	private void Turn() { 
 		targetRotation = Quaternion.Slerp(playerModel.transform.rotation, targetRotation, Time.deltaTime * 12f);
 		playerModel.transform.rotation = targetRotation;
+		weaponModel.transform.rotation = targetRotation;
+	}
+
+	private void Attack() {
+		if (!playerBlockAttack) {
+			weaponModel.SetTrigger("Attack");
+			StartCoroutine(AttackCooldown());
+		}
 	}
 
 	//== Coroutines =====================
@@ -160,6 +174,13 @@ public class CharacterCtrl : MonoBehaviour {
 				yield return null;
 			}
 		}
+		yield return null;
+	}
+
+	IEnumerator AttackCooldown() {
+		playerBlockAttack = true;
+		yield return new WaitForSeconds(0.3f);
+		playerBlockAttack = false;
 		yield return null;
 	}
 

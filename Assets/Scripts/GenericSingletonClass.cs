@@ -22,8 +22,7 @@ public class GenericSingletonClass<T> : MonoBehaviour where T : Component {
 			instance = this as T;
 			DontDestroyOnLoad(this.gameObject);
 		}
-		else {
-			Debug.Log("DESTROY");
+		else { 
 			Destroy(gameObject);
 		}
 	}

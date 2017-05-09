@@ -11,7 +11,6 @@ public class CharacterCtrl : MonoBehaviour {
 	public GameObject pairedCamera;
 	public float jumpForce;
 
-	private bool playerBlockAttack;
 	private GameObject playerModel;
 	private Animator weaponModel;
 	private Rigidbody rBody;
@@ -23,6 +22,7 @@ public class CharacterCtrl : MonoBehaviour {
 	private float forwardInput, sideInput;
 	private Coroutine jumpCoroutine = null;
 	private bool disableInputs;
+	private bool isAttacking;
 
 	//== Mono ===========================
 
@@ -36,11 +36,11 @@ public class CharacterCtrl : MonoBehaviour {
 	}
 
 	void Start () {
-		playerBlockAttack = false;
 		currentVel = maxVel;
 		targetRotation = transform.rotation;
 		forwardInput = sideInput = 0;
 		disableInputs = false;
+		isAttacking = false;
 		Initialize();
 	}
 
@@ -48,6 +48,10 @@ public class CharacterCtrl : MonoBehaviour {
 
 	public Quaternion TargetRotation {
 		get { return targetRotation; }
+	}
+
+	public bool IsAttacking {
+		get { return isAttacking; }
 	}
 
 	public bool DisableInputs {
@@ -157,13 +161,14 @@ public class CharacterCtrl : MonoBehaviour {
 		weaponModel.transform.rotation = targetRotation;
 	}
 
+	// TODO: fix double attack with other way than setting cooldown
 	private void Attack() {
-		if (!playerBlockAttack) {
+		if (weaponModel.GetCurrentAnimatorStateInfo(0).IsName("wait")) {
 			weaponModel.SetTrigger("Attack");
-			StartCoroutine(AttackCooldown());
+			StartCoroutine(Attacking());
 		}
 	}
-
+	
 	//== Coroutines =====================
 
 	IEnumerator DelayJump() {
@@ -177,10 +182,10 @@ public class CharacterCtrl : MonoBehaviour {
 		yield return null;
 	}
 
-	IEnumerator AttackCooldown() {
-		playerBlockAttack = true;
-		yield return new WaitForSeconds(0.3f);
-		playerBlockAttack = false;
+	IEnumerator Attacking() {
+		isAttacking = true;
+		yield return new WaitForSeconds(PlayerData.attackSpeed);
+		isAttacking = false;
 		yield return null;
 	}
 

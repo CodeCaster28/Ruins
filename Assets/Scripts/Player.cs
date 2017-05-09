@@ -14,8 +14,10 @@ public class Player : MonoBehaviour {
 	//== Fields =========================
 
 	public int maxHealth;
+	public float attackSpeed;
 
 	private MeshRenderer playerModel;
+	private Animator swordAnimation;
 	private ParticleSystem[] healParticles;
 	private GameObject player;
 	private Coroutine healEffect;
@@ -26,10 +28,13 @@ public class Player : MonoBehaviour {
 	private void Start() {
 		PlayerData.health = maxHealth;
 		PlayerData.maxHealth = maxHealth;
+		PlayerData.attackSpeed = attackSpeed;
 		PlayerData.isPlayerInvincible = false;
 		player = GameObject.Find("Player");
 		playerModel = player.transform.Find("Base/Model").gameObject.GetComponent<MeshRenderer>();
 		healParticles = player.transform.Find("Base/HealParticle").GetComponentsInChildren<ParticleSystem>();
+		swordAnimation = player.transform.Find("Base/Weapons/Sword").GetComponent<Animator>();
+		swordAnimation.SetFloat("AttackSpeed", PlayerData.attackSpeed);
 		defaultColor = playerModel.material.color;
 		if (RefreshHearts != null) {
 			RefreshHearts();

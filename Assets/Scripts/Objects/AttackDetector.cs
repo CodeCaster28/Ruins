@@ -6,23 +6,33 @@ public class AttackDetector : MonoBehaviour {
 
 	private bool canDamage;
 	private MeshRenderer model;
+	private Rigidbody rBody;
 
 	private void Start() {
 		canDamage = true;
 		model = GetComponent<MeshRenderer>();
+		rBody = GetComponent<Rigidbody>();
 	}
 
 	public void Damage() {
-		if (canDamage)
-			StartCoroutine(Highlight());
+		if (canDamage) {
+			StartCoroutine(TakeDamage());
+		}
 	}
 
-	IEnumerator Highlight() {
+	IEnumerator TakeDamage() {
+
+		rBody.isKinematic = false;
 		canDamage = true;
-		model.material.color = new Color(1, 0, 0, 1);
+		model.material.color = new Color(1f, 0.35f, 0.35f, 1);
+		rBody.AddForce(1, 0, 0, ForceMode.Impulse);
+
 		yield return new WaitForSeconds(0.4f);
-		model.material.color = new Color(1, 1, 1, 1);
+
 		canDamage = true;
+		model.material.color = new Color(1, 1, 1, 1);
+		rBody.isKinematic = true;
+
 		yield return null;
 	}
 

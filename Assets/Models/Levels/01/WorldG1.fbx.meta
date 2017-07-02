@@ -1,18 +1,30 @@
 fileFormatVersion: 2
-guid: a5ca2227b322c814f831ef3f51c7183d
-timeCreated: 1493142270
+guid: 76704567635599f44974f282c8c8818f
+timeCreated: 1498986351
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: //RootNode
-    100002: Wall (1)
-    400000: //RootNode
-    400002: Wall (1)
-    2300000: Wall (1)
-    3300000: Wall (1)
-    4300000: Wall (1)
-    6400000: Wall (1)
+    100000: ruinFloor1 (1)
+    100002: ruinWall1 (1)
+    100004: shrine (1)
+    100006: //RootNode
+    400000: ruinFloor1 (1)
+    400002: ruinWall1 (1)
+    400004: shrine (1)
+    400006: //RootNode
+    2300000: ruinFloor1 (1)
+    2300002: ruinWall1 (1)
+    2300004: shrine (1)
+    3300000: ruinFloor1 (1)
+    3300002: ruinWall1 (1)
+    3300004: shrine (1)
+    4300000: ruinWall1 (1)
+    4300002: ruinFloor1 (1)
+    4300004: shrine (1)
+    6400000: ruinFloor1 (1)
+    6400002: ruinWall1 (1)
+    6400004: shrine (1)
   materials:
     importMaterials: 1
     materialName: 1
@@ -56,8 +68,8 @@ ModelImporter:
     useFileScale: 1
   tangentSpace:
     normalSmoothAngle: 60
-    normalImportMode: 1
-    tangentImportMode: 3
+    normalImportMode: 0
+    tangentImportMode: 0
   importAnimation: 1
   copyAvatar: 0
   humanDescription:

@@ -10,10 +10,10 @@ public class CharacterCtrl : MonoBehaviour {
 	public float maxVel = 7;
 	public GameObject pairedCamera;
 	public float jumpForce;
+	public Rigidbody rBody;
 
 	private GameObject playerModel;
 	private Animator weaponModel;
-	private Rigidbody rBody;
 	private Feets feets;
 	private float currentVel;
 	private Quaternion targetRotation;

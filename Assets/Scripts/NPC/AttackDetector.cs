@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AttackDetector : MonoBehaviour {
+public class AttackDetector : BaseLiving {
 
+	public override void Damage(Vector3 source, float force, int damage) {
+		base.Damage(source, force, damage);
+	}
+	/*
 	private bool canDamage;
 	private MeshRenderer model;
 	private Rigidbody rBody;
@@ -37,6 +41,6 @@ public class AttackDetector : MonoBehaviour {
 		rBody.isKinematic = true;
 		canDamage = true;
 		yield return null;
-	}
+	}*/
 
 }

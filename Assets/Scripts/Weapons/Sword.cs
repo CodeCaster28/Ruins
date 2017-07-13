@@ -7,8 +7,11 @@ public class Sword : MonoBehaviour {
 	public Transform start;
 	public Transform end;
 
-	private float knockoutForce = 4;
+	private BaseLiving target;
+	private float knockoutForce = 10;
+	private int damage = 1;
 	private CharacterCtrl charCtrl;
+
 	private void Start() {
 		charCtrl = GetComponentInParent<CharacterCtrl>();
 	}
@@ -16,9 +19,9 @@ public class Sword : MonoBehaviour {
 	private void Update() {
 		RaycastHit hit;
 		if (Physics.Raycast(start.position, end.position - start.position, out hit, Vector3.Distance(start.position, end.position))) {
-			if (hit.collider.gameObject.tag == "Damageable" && charCtrl.IsAttacking) {
-				//Debug.Log("|" + charCtrl.rBody.gameObject.name + "|" + charCtrl.rBody.transform.position + "|");
-				hit.collider.gameObject.GetComponent<AttackDetector>().Damage(charCtrl.rBody.transform.position, knockoutForce);
+			target = hit.collider.GetComponent<BaseLiving>();
+			if (target != null && charCtrl.IsAttacking) {
+				target.Damage(charCtrl.rBody.transform.position, knockoutForce, damage);
 			}
 		}
 	}

@@ -8,4 +8,14 @@ public static class ExtensionMethods{
 		value += parameter;
 		return value > topLimit ? topLimit : (value < 0 ? 0 : value);
 	}
+
+	public static void SetTriggerRequired(this Animator anim, string triggerName, string animName, int layerIndex = 0){
+		if (anim.GetCurrentAnimatorStateInfo(layerIndex).IsName(animName))
+			anim.SetTrigger(triggerName);
+	}
+
+	public static void SetTriggerExcluded(this Animator anim, string triggerName, string animName, int layerIndex = 0) {
+		if (!anim.GetCurrentAnimatorStateInfo(layerIndex).IsName(animName))
+			anim.SetTrigger(triggerName);
+	}
 }
